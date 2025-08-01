@@ -1,221 +1,249 @@
 # LSTMFE
+A state-of-the-art deep learning framework for traffic flow prediction, combining coordinate attention,Ein-FFT, and temporal decomposition techniques.
 
+## 🎯 Overview
 
+LSTMFE is an advanced model designed for accurate traffic flow prediction. The model integrates multiple cutting-edge techniques to capture both spatial dependencies between traffic sensors and temporal patterns in traffic data.
 
+## ✨ Key Features
 
-### 快速开始 (3步即可复现)
+- **🔍 Coordinate Attention**: Enhanced spatial feature representation
+- **🌐 Graph Convolution**: Efficient processing of sensor network topology  
+- **⏰ Temporal Decomposition**: Separation of trend and seasonal components
+- **🔄 Multiscale Extraction**: Feature learning at different temporal scales
+- **⚡ GPU Acceleration**: Optimized for high-performance computing
 
-```bash
-# 1. 安装依赖
-pip install -r requirements.txt
+## 🏗️ Architecture
 
-# 2. 一键复现最佳结果 (推荐PEMS07数据集)
-python reproduce_best_results.py PEMS07
+### Core Components
 
-# 3. 验证结果
-python test.py
-```
+1. **Coordinate Attention Mechanism**
+   - Captures spatial position information
+   - Enhances channel relationships
+   - Improves long-range dependency modeling
 
-## 📊 期望结果
+2. **Chebyshev Graph Convolution**
+   - Processes spatial relationships between sensors
+   - Efficient polynomial-based graph operations
+   - Scalable to large sensor networks
 
-| 数据集 | 最佳结果 MAE | 复现范围 MAE | 最佳结果 MAPE | 复现范围 MAPE |
-|--------|-------------|-------------|--------------|-------------|
-| PEMS07 | 16.63 | 16.0-17.5 | 7.79% | 7.5-8.5% |
-| PEMS08 | 12.47 | 12.0-13.5 | 9.04% | 8.5-10.0% |
-| PEMS03 | TBD | TBD | TBD% | TBD% |
-| PEMS04 | TBD | TBD | TBD% | TBD% |
+3. **Temporal Decomposition Module**
+   - Separates trend and seasonal components
+   - Adaptive pattern recognition
+   - Improved temporal modeling
 
-**📝 说明**: 
-- **最佳结果**: 作者多次训练得到的最优值
-- **复现范围**: 考虑训练随机性的合理期望范围
-- 如果您的结果在范围内，说明复现成功
-- 如果偏差较大，建议运行2-3次取最佳结果
+4. **Multiscale Feature Extractor**
+   - Frequency domain transformations
+   - Multiple temporal scale analysis
+   - Enhanced pattern recognition
 
-## 📁 数据集准备
+5. **Gating Mechanism**
+   - Information flow control
+   - Gradient vanishing prevention
+   - Component integration
 
-确保数据集按以下结构放置：
+## 📊 Supported Datasets
 
-```
-项目根目录/
-├── PEMS03/
-│   ├── PEMS03.npz        # 交通流数据
-│   └── adj.npy           # 邻接矩阵 (可选，缺失时自动生成)
-├── PEMS04/
-│   ├── PEMS04.npz
-│   └── adj.npy
-├── PEMS07/
-│   ├── PEMS07.npz
-│   └── adj.npy
-├── PEMS08/
-│   ├── PEMS08.npz
-│   └── adj.npy
-└── ...
-```
+| Dataset | Sensors | Time Steps | Features | Description |
+|---------|---------|------------|----------|-------------|
+| PEMS03 | 358 | 26,208 | 3 | San Francisco Bay Area |
+| PEMS04 | 307 | 16,992 | 3 | San Francisco Bay Area |
+| PEMS07 | 883 | 28,224 | 3 | Los Angeles County |
+| PEMS08 | 170 | 17,856 | 3 | San Bernardino Area |
 
-## 🔧 环境要求
+### Data Format
+- **Features**: Flow, Occupancy, Speed
+- **Temporal Resolution**: 5-minute intervals
+- **Spatial Structure**: Highway sensor networks
 
-- **Python**: >= 3.7
-- **PyTorch**: >= 1.9.0
-- **CUDA**: 建议使用GPU加速 (可选)
+## 🚀 Quick Start
 
-## 🚀 使用方法
-
-### 方法1: 一键复现 (推荐)
+### Prerequisites
 
 ```bash
-# 使用最佳配置训练指定数据集
-python reproduce_best_results.py PEMS07
-
-# 或者让脚本自动选择可用数据集
-python reproduce_best_results.py
+Python >= 3.7
+PyTorch >= 1.9.0
+NumPy >= 1.19.0
 ```
 
-### 方法2: 自定义训练
+### Installation
 
 ```bash
-# 基础训练
-python train.py
+# Clone repository
+git clone <repository-url>
+cd stmodel
 
-# 测试已训练模型
-python test.py
+# Install dependencies
+pip install torch numpy pandas scikit-learn
+
+# Verify installation
+python architecture.py
 ```
 
-### 方法3: 交互式训练
+### Basic Usage
 
 ```python
-from train import train_and_evaluate
-from best_config import get_best_config
+from architecture import STModel, get_model_config
 
-# 获取最佳配置
-config = get_best_config('PEMS07')
+# Initialize model
+config = get_model_config('PEMS08')
+model = STModel(**config)
 
-# 训练模型
-results = train_and_evaluate(
-    dataset='PEMS07',
-    **{k: v for k, v in config.items() if k != 'expected_results'}
-)
-
-print(f"MAE: {results['MAE']:.4f}")
+# Model summary
+print(f"Parameters: {sum(p.numel() for p in model.parameters()):,}")
 ```
 
-## 📈 模型架构
+## ⚙️ Configuration
 
-本模型包含三个核心模块：
-
-1. **Module 1: Multiscale Temporal Feature Extraction (MTFE)**
-   - 基于EinFFT的多尺度时间特征提取
-   - 自动周期检测和频域增强
-
-2. **Module 2: Graph-Enhanced Coordinate Attention (GECA)**
-   - 切比雪夫图卷积网络
-   - 坐标注意力机制
-
-3. **Module 3: Time-aware Decomposition (TATSD)**
-   - 时间感知的趋势季节分解
-   - 自适应权重学习
-
-## 🎛️ 关键超参数
+### Model Parameters
 
 ```python
-BEST_PARAMS = {
-    'd_model': 96,           # 模型维度
-    'decoder_layers': 3,     # 解码器层数
-    'seq_len': 12,          # 输入序列长度
-    'batch_size': 32,       # 批次大小
-    'epochs': 300,          # 训练轮数
-    'learning_rate': 1e-3,  # 学习率
-    'top_k': 3,             # 主要频率数量
-    'use_decomposition': True,    # 是否使用分解模块
-    'decomp_weight': 0.1,   # 分解模块权重
+MODEL_CONFIG = {
+    'seq_len': 12,              # Input sequence length
+    'num_nodes': 170,           # Number of sensors
+    'd_model': 96,              # Hidden dimension
+    'decoder_layers': 3,        # Decoder depth
+    'use_decomposition': True,  # Enable decomposition
+    'decomp_weight': 0.1,       # Decomposition loss weight
 }
 ```
 
-## 🔍 故障排除
+### Training Parameters
 
-### 常见问题
-
-1. **数据集未找到**
-   ```
-   解决方案: 确保数据集文件名和路径正确
-   ```
-
-2. **CUDA内存不足**
-   ```bash
-   # 减小批次大小
-   python reproduce_best_results.py PEMS07 --batch_size 16
-   ```
-
-3. **结果差异较大**
-   ```
-   可能原因: 
-   - 硬件差异导致的数值精度差异
-   - PyTorch版本不同
-   - 随机种子影响
-   ```
-
-### 性能优化
-
-- **GPU加速**: 自动检测并使用CUDA
-- **混合精度**: 可在代码中启用AMP加速训练
-- **批次大小**: 根据显存调整batch_size
-
-## 📊 实验复现
-
-### 完整复现流程
-
-1. **环境设置**
-   ```bash
-   conda create -n st-mtfe python=3.8
-   conda activate st-mtfe
-   pip install -r requirements.txt
-   ```
-
-2. **数据准备** 
-   - 下载PEMS数据集
-   - 放置在正确目录结构中
-
-3. **训练模型**
-   ```bash
-   python reproduce_best_results.py PEMS07
-   ```
-
-4. **验证结果**
-   ```bash
-   python test.py
-   ```
-
-### 预期训练时间
-
-| 数据集 | GPU (V100) | CPU | 内存使用 |
-|--------|------------|-----|----------|
-| PEMS03 | ~2小时     | ~8小时 | ~4GB |
-| PEMS04 | ~3小时     | ~12小时 | ~6GB |
-| PEMS07 | ~2.5小时   | ~10小时 | ~5GB |
-| PEMS08 | ~3.5小时   | ~14小时 | ~7GB |
-
-## 📝 引用
-
-如果这个代码对您的研究有帮助，请引用我们的论文：
-
-```bibtex
-@article{your_paper_2024,
-  title={Your Paper Title},
-  author={Your Name},
-  journal={Your Journal},
-  year={2024}
+```python
+TRAINING_CONFIG = {
+    'batch_size': 32,           # Batch size
+    'learning_rate': 0.001,     # Learning rate
+    'epochs': 300,              # Training epochs
+    'optimizer': 'Adam',        # Optimizer type
 }
 ```
 
-## 📞 联系方式
+## 📈 Performance
 
-如有问题，请：
-- 提交Issue到GitHub仓库
-- 发送邮件至：your.email@example.com
+### Evaluation Metrics
 
-## 🙏 致谢
+- **MAE**: Mean Absolute Error
+- **MAPE**: Mean Absolute Percentage Error  
+- **RMSE**: Root Mean Square Error
 
-感谢所有为此项目做出贡献的研究者和开发者。
 
----
-**最后更新**: 2024年7月30日
-Dataset link: https://github.com/HITPLZ/DSTRformer
+## 🔧 Advanced Features
+
+### Multi-Dataset Support
+
+```python
+# Automatic configuration for different datasets
+config_03 = get_model_config('PEMS03')  # 358 sensors
+config_07 = get_model_config('PEMS07')  # 883 sensors
+config_08 = get_model_config('PEMS08')  # 170 sensors
+```
+
+### GPU Optimization
+
+```python
+import torch
+
+# Automatic device selection
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = model.to(device)
+
+# Mixed precision training support
+from torch.cuda.amp import GradScaler, autocast
+scaler = GradScaler()
+```
+
+### Memory Efficiency
+
+- Gradient checkpointing for large models
+- Batch size adaptation for different GPU memory
+- Efficient data loading with multi-processing
+
+## 🛠️ Development
+
+### Architecture Extension
+
+The modular design allows easy extension:
+
+```python
+# Add custom attention mechanism
+class CustomAttention(nn.Module):
+    def __init__(self, d_model):
+        super().__init__()
+        # Custom implementation
+        pass
+
+# Integrate into STModel
+model.coordinate_attention = CustomAttention(d_model)
+```
+
+### Custom Loss Functions
+
+```python
+def custom_loss(y_pred, y_true, decomp_loss=0):
+    mae_loss = torch.mean(torch.abs(y_pred - y_true))
+    return mae_loss + 0.1 * decomp_loss
+```
+
+## 📋 System Requirements
+
+### Recommended Setup
+- **RAM**: 16GB+
+- **GPU**: NVIDIA GPU with 8GB+ VRAM
+- **Storage**: SSD with 10GB+ free space
+- **CUDA**: 11.0+
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**Memory Error**
+```bash
+# Reduce batch size
+batch_size = 16  # Default: 32
+```
+
+**CUDA Not Available**
+```bash
+# Install CUDA-enabled PyTorch
+pip install torch --index-url https://download.pytorch.org/whl/cu118
+```
+
+**Dataset Not Found**
+```bash
+# Verify data structure
+ls PEMS08/
+# Should contain: PEMS08.npz, adj.npy
+```
+
+## 📚 Documentation
+
+### API Reference
+
+- `STModel`: Main architecture class
+- `CoordinateAttention`: Spatial attention mechanism
+- `ChebGraphConv`: Graph convolution layer
+- `TemporalDecomposition`: Time series decomposition
+- `MultiScaleFeatureExtractor`: Multi-scale feature learning
+
+### Configuration Guide
+
+- Model hyperparameters
+- Dataset-specific settings
+- Training optimization
+- Hardware acceleration
+
+
+### Development Setup
+
+```bash
+# Development installation
+pip install -e .
+
+
+## Data Preparation
+LSTMFE is implemented on several public traffic datasets.  
+
+### Datasets Used
+- PEMS03, PEMS04, PEMS07 and PEMS08 from [STSGCN (AAAI-20)](https://github.com/Davidham3/STSGCN).  
+

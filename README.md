@@ -1,5 +1,5 @@
 # LSTMFE
-A state-of-the-art deep learning framework for traffic flow prediction, combining coordinate attention,Ein-FFT, and temporal decomposition techniques.
+A state-of-the-art model for traffic flow prediction, combining coordinate attention,Ein-FFT, and temporal decomposition techniques.
 
 ## 🎯 Overview
 

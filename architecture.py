@@ -1,4 +1,4 @@
-
+#This is pseudocode used for demonstration,real code will come soon
 
 import torch
 import torch.nn as nn

@@ -44,12 +44,12 @@ LSTMFE is an advanced model designed for accurate traffic flow prediction. The m
 
 ## 📊 Supported Datasets
 
-| Dataset | Sensors | Time Steps | Features | Description |
-|---------|---------|------------|----------|-------------|
-| PEMS03 | 358 | 26,208 | 3 | San Francisco Bay Area |
-| PEMS04 | 307 | 16,992 | 3 | San Francisco Bay Area |
-| PEMS07 | 883 | 28,224 | 3 | Los Angeles County |
-| PEMS08 | 170 | 17,856 | 3 | San Bernardino Area |
+| Dataset | Sensors | Time Steps | Features | 
+|---------|---------|------------|----------|
+| PEMS03 | 358 | 26,208 | 3 | 
+| PEMS04 | 307 | 16,992 | 3 |
+| PEMS07 | 883 | 28,224 | 3 |
+| PEMS08 | 170 | 17,856 | 3 |
 
 ### Data Format
 - **Features**: Flow, Occupancy, Speed
